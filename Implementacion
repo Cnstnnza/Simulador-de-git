@@ -1,0 +1,38 @@
+#COMANDOS BASICOS
+git init ---> iniciar un repositorio
+git add . ---> añadir todos los archivos modificados
+git commit -m "mensaje" ---> confirmar los cambios
+git push ----> subir los cambios al repositorio
+git pull ----> obtener los cambios del repositorio
+git status ----> ver los cambios
+git log ----> ver el historial de commits
+git branch ----> ver las ramas
+
+# DATOS IMPORTANTES DE UN COMMIT
+Id del commit
+Autor del commit
+Mensaje del commit
+Hora del commit
+
+Almacenar en una lista, arreglo, etc.
+
+# GIT INIT
+Al crear un repositorio, se creara una carpeta la cual tendra el nombre del repositorio. Por lo tanto es importante que el comando
+git init vaya acompañado del nombre del repositorio, por ejemplo: #git init primer_repo
+
+# GIT CREATE
+Simulara la creacion de un archivo, por ejemplo: #git create archivo.txt 
+el cual se preparara para subir al repositorio creado anteriormente al usar el comando: #git add archivo.txt
+
+# GIT COMMIT
+Para confirmar los cambios se usa el comando: #git commit -m "mensaje" 
+el cual necesitara ciertos datos como el autor del commit, el mensaje del commit y la hora del commit. Este se guardara
+en una lista, arreglo el cual se podra ver con el comando: #git log
+
+# GIT PUSH 
+Este comando subira todos los cambios al repositorio creado anteriormente. 
+
+
+#IMPORTANTE
+Crear un comando help que muestre todos los comandos disponibles y su descripcion.
+Crear mensajes de error 
