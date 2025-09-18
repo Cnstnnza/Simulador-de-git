@@ -1,17 +1,30 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
+
 #include "funciones.h"
 
 #define MAX_COMMITS 100
+#define MAX_ARCHIVOS 100
+
 
 // Estructura de commit
 typedef struct {
     int id;
+    char autor[100];
     char mensaje[256];
+    char hora[30];
 } Commit;
 
+// estructura del archivo
+typedef struct {
+    char nombre[100];
+} Archivo;
+
 // Variables globales
+Archivo archivos[MAX_ARCHIVOS];
+int archivo_count = 0;
 Commit commits[MAX_COMMITS];
 int commit_count = 0;
 
@@ -29,7 +42,7 @@ int main() {
             break;
         }
         else if (strcmp(comando, "git init") == 0) {
-            init();
+            init_repo();
         }
         else if (strcmp(comando, "git help") == 0) {
             help();
@@ -43,6 +56,10 @@ int main() {
         else if (strcmp(comando, "git log") == 0) {
             log_commits();
         }
+        else if (strncmp(comando, "git create ", 11) == 0) {
+            char *nombre = comando + 11;
+            create_archivo(nombre); 
+        }      
         else {
             printf("Comando no reconocido: %s\n", comando);
         }
@@ -74,16 +91,27 @@ void help() {
 
 void commit(char *mensaje) {
     if (commit_count >= MAX_COMMITS) {
-        printf("Error: límite de commits alcanzado.\n");
+        printf("Error:Limites de Commits alcanzado\n");
         return;
     }
 
     commits[commit_count].id = commit_count + 1;
+
+    printf("Autor:");
+    fgets(commits[commit_count].autor, sizeof(commits[commit_count].autor), stdin);
+    commits[commit_count].autor[strcspn(commits[commit_count].autor, "\n")] = '\0';
+
     strncpy(commits[commit_count].mensaje, mensaje, sizeof(commits[commit_count].mensaje) - 1);
     commits[commit_count].mensaje[sizeof(commits[commit_count].mensaje) - 1] = '\0';
 
-    printf("[Commit %d] %s\n", commits[commit_count].id, commits[commit_count].mensaje);
-
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    snprintf(commits[commit_count].hora, sizeof(commits[commit_count].hora),"%02d/%02d/%04d %02d:%02d:%02d",tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,tm.tm_hour, tm.tm_min, tm.tm_sec);
+    printf("[Commit %d] Autor: %s | Mensaje: %s | Hora: %s\n",
+           commits[commit_count].id,
+           commits[commit_count].autor,
+           commits[commit_count].mensaje,
+           commits[commit_count].hora);
     commit_count++;
 }
 
@@ -95,7 +123,37 @@ void log_commits() {
 
     printf("Historial de commits:\n");
     for (int i = commit_count - 1; i >= 0; i--) {
-        printf("Commit %d: %s\n", commits[i].id, commits[i].mensaje);
+        printf("Commit %d | Autor: %s | Mensaje: %s | Hora: %s\n",
+               commits[i].id,
+               commits[i].autor,
+               commits[i].mensaje,
+               commits[i].hora);
     }
+}
+
+int buscar_archivo(char *nombre) {
+    for (int i = 0; i < archivo_count; i++) {
+        if (strcmp(archivos[i].nombre, nombre) == 0) {
+            return i; 
+        }
+    }
+    return -1;
+}
+
+void create_archivo(char *nombre) {
+    if (archivo_count >= MAX_ARCHIVOS) {
+        printf("Error: límite de archivos alcanzado.\n");
+        return;
+    }
+    if (buscar_archivo(nombre) != -1) {
+        printf("Error: el archivo '%s' ya existe.\n", nombre);
+        return;
+    }
+
+    strncpy(archivos[archivo_count].nombre, nombre, sizeof(archivos[archivo_count].nombre) - 1);
+    archivos[archivo_count].nombre[sizeof(archivos[archivo_count].nombre) - 1] = '\0';
+    archivo_count++;
+
+    printf("Archivo '%s' creado.\n", nombre);
 }
 
