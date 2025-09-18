@@ -4,6 +4,7 @@
 void help();
 void init_repo(char *nombre);
 void delete_repo(char *nombre);
-
+void commit(char *mensaje);
+void log_commits();
 
 #endif

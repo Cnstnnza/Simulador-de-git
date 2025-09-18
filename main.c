@@ -1,85 +1,101 @@
-// simulador git
 #include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
+#include <stdlib.h>
 #include "funciones.h"
 
+#define MAX_COMMITS 100
 
-int main(){
-    char carpeta[40];
-    char comando[10];
+// Estructura de commit
+typedef struct {
+    int id;
+    char mensaje[256];
+} Commit;
 
-    printf("Bienvenido a Git Simulator\n");
-    printf("Si necesitas ayuda, escribe 'help'\n");
+// Variables globales
+Commit commits[MAX_COMMITS];
+int commit_count = 0;
 
-    while(1)
-    {   
-        printf("git-simulator> ");
-        fgets(comando, sizeof(comando), stdin);
-        comando[strcspn(comando, "\n")] = 0;
+int main() {
+    char comando[512];
 
-        if(strcmp(comando, "exit") == 0)
-        {
-            printf("Saliendo del simulador de Git. ¡Hasta luego!\n");
+    while (1) {
+        printf("ugit> ");
+        if (fgets(comando, sizeof(comando), stdin) == NULL) {
             break;
         }
-        else if(strcmp(comando, "help") == 0)
-        {
+        comando[strcspn(comando, "\n")] = 0; // quitar salto de línea
+
+        if (strcmp(comando, "exit") == 0) {
+            break;
+        }
+        else if (strcmp(comando, "git init") == 0) {
+            init();
+        }
+        else if (strcmp(comando, "git help") == 0) {
             help();
         }
-        else if(strcmp(comando, "git init") == 0)
-        {
-            printf("Ingrese el nombre del repositorio a crear: ");
-            scanf("%s", carpeta);
-            init_repo(carpeta);
+        else if (strncmp(comando, "git commit -m \"", 15) == 0) {
+            char *mensaje = comando + 15;
+            char *fin = strrchr(mensaje, '"');
+            if (fin) *fin = '\0'; // cerrar la cadena del mensaje
+            commit(mensaje);
         }
-        else if(strcmp(comando, "git delete") == 0)
-        {
-            printf("Ingrese el nombre del repositorio a eliminar: ");
-            scanf("%s", carpeta);
-            printf("¿Está seguro de que desea eliminar el repositorio '%s'? (S/N): ", carpeta);
-            fgets(comando, sizeof(comando), stdin);
-            comando[strcspn(comando, "\n")] = 0;
-            if(strcmp(comando, "S") == 0)
-            {
-                delete_repo(carpeta);
-            }
-            else
-            {
-                printf("No se eliminó el repositorio '%s'.\n", carpeta);
-            }
+        else if (strcmp(comando, "git log") == 0) {
+            log_commits();
         }
-        else 
-        {
-            printf("Comando no reconocido. Escriba 'help' para ver los comandos disponibles.\n");
+        else {
+            printf("Comando no reconocido: %s\n", comando);
         }
     }
+
     return 0;
 }
 
-void init_repo(char *nombre)
-{
-    if (mkdir(nombre, 0700) == 0) {
-        printf("Repositorio '%s' creado correctamente.\n", nombre);
-    } else {
-        perror("Error al crear el repositorio");
+
+
+void init_repo() {
+    printf("Repositorio inicializado.\n");
+}
+
+void delete_repo() {
+    printf("Repositorio eliminado.\n");
+}
+
+void help() {
+    printf("Comandos disponibles:\n");
+    printf("  git init               -> Inicializa un repositorio\n");
+    printf("  git add \"archivo\"    -> Añade un archivo\n");
+    printf("  git commit -m \"msg\"   -> Crea un commit con mensaje\n");
+    printf("  git log                -> Muestra historial de commits\n");
+    printf("  git help               -> Muestra este mensaje\n");
+    printf("  git delete             -> Elimina el repositorio\n");
+    printf("  exit                   -> Salir\n");
+}
+
+void commit(char *mensaje) {
+    if (commit_count >= MAX_COMMITS) {
+        printf("Error: límite de commits alcanzado.\n");
+        return;
+    }
+
+    commits[commit_count].id = commit_count + 1;
+    strncpy(commits[commit_count].mensaje, mensaje, sizeof(commits[commit_count].mensaje) - 1);
+    commits[commit_count].mensaje[sizeof(commits[commit_count].mensaje) - 1] = '\0';
+
+    printf("[Commit %d] %s\n", commits[commit_count].id, commits[commit_count].mensaje);
+
+    commit_count++;
+}
+
+void log_commits() {
+    if (commit_count == 0) {
+        printf("No hay commits.\n");
+        return;
+    }
+
+    printf("Historial de commits:\n");
+    for (int i = commit_count - 1; i >= 0; i--) {
+        printf("Commit %d: %s\n", commits[i].id, commits[i].mensaje);
     }
 }
 
-void delete_repo(char *nombre)
-{
-    if (rmdir(nombre) == 0) {
-        printf("Repositorio '%s' eliminado correctamente.\n", nombre);
-    } else {
-        perror("Error al eliminar el repositorio");
-    }
-}
-
-void help(){
-    printf("COMANDOS DISPONIBLES\n");
-    printf("git init\t\t\tInicializa un repositorio\n");
-    printf("git pull\t\t\tConsigue los cambios del repositorio remoto\n");
-    printf("git push\t\t\tEnvía los cambios al repositorio remoto\n");
-    printf("git add\t\t\tAñade un archivo al repositorio\n");
-    printf("git commit\t\t\tGuarda los cambios en el repositorio\n");
-}
