@@ -335,7 +335,7 @@ void push_repo() {
     system("cp -r repo/commits repo/remote/commits 2>/dev/null || true");
     system("cp repo/commits.log repo/remote/commits.log 2>/dev/null || true");
 #endif
-    printf("Push simulado: commits y log copiados al remoto (repo/remote).\n");
+    printf("Commits y log copiados al remoto (repo/remote).\n");
 }
 
 /* Simulación de pull: si existe repo/remote, copia al repo local */
@@ -347,7 +347,7 @@ void pull_repo() {
     system("if [ -d repo/remote/commits ]; then cp -r repo/remote/commits repo/commits 2>/dev/null; fi");
     system("if [ -f repo/remote/commits.log ]; then cp repo/remote/commits.log repo/commits.log 2>/dev/null; fi");
 #endif
-    printf("Pull simulado: archivos obtenidos del remoto si existían.\n");
+    printf("Archivos obtenidos del remoto.\n");
 }
 
 /* Branch: lista o crea */

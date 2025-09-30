@@ -1,0 +1,22 @@
+Este proyecto es una implementación de un simulador de control de versiones
+llamado UGit. El objetivo es crear un sistema de control de versiones
+basado en Git, pero con una interfaz de usuario simplificada y una
+implementación más sencilla.
+
+El simulador UGit se basa en la idea de que un repositorio de control de
+versiones es un conjunto de archivos y un historial de commits. El usuario
+puede crear un repositorio, agregar archivos, realizar commits y gestionar
+ramas. Además, el simulador UGit permite simular la interacción con el
+repositorio de forma más sencilla, ya que no necesita una conexión a Internet
+o un servidor remoto.
+
+El objetivo de este proyecto es crear un simulador de control de versiones
+que se pueda utilizar para enseñar conceptos de control de versiones y
+Git. El código fuente del simulador UGit se encuentra en el archivo
+main.c, y se puede compilar con el siguiente comando:
+
+make
+
+y luego ejecutar con el comando:
+
+./main
